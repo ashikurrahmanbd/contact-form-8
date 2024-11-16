@@ -8,6 +8,10 @@ class Cpt{
 
         add_action( 'init', [$this, 'register_cf8_post_type'] );
 
+        add_action( 'add_meta_boxes', [$this, 'pxls_cf8_metaboxes'] );
+
+        add_action( 'save_post', [$this, 'pxls_cf8_form_selection_meta_box_data_save'] );
+
     }
 
 
@@ -46,6 +50,97 @@ class Cpt{
         );
 
         register_post_type( 'pxls-cf8', $args );
+
+    }
+
+    /**
+     * 
+     * Meta boxes
+     */
+
+    public function pxls_cf8_metaboxes(){
+
+        add_meta_box(
+
+            'pxls_cf8_select_form_metabox', 
+            'Select Form', 
+            [$this, 'pxls_cf8_select_form_metabox'], 
+            'pxls-cf8', 
+            'normal', 
+            'default',  
+
+        );
+
+    }
+
+
+    /**
+     * Meta box callback
+     */
+    public function pxls_cf8_select_form_metabox($post){
+
+        wp_nonce_field( 'pxls_cf8_form_selection_metabox_action', 'pxls_cf8_form_selection_metabox_nonce');
+
+        $selected_form = get_post_meta( $post->ID, 'pxls_cf8_selected_form', true ) ?: '';
+
+        
+        
+        ?>
+
+        <div class="form-selection">
+            <select name="pxls_cf8_form_selection" id="pxls_cf8_form_selection">
+                <option value="">Select Form</option>
+                <option value="contact_form_1" <?php selected($selected_form, 'contact_form_1'); ?>>Contact Form 1</option>
+                <option value="contact_form_2" <?php selected($selected_form, 'contact_form_2'); ?>>Contact Form 2</option>
+                <option value="contact_form_3" <?php selected($selected_form, 'contact_form_3'); ?>>Contact Form 3</option>
+                <option value="contact_form_4" <?php selected($selected_form, 'contact_form_4'); ?>>Contact Form 4</option>
+            </select>
+        </div>
+
+        <?php
+
+
+    }
+
+
+    /**
+     * Meta box data save
+     */
+
+     public function pxls_cf8_form_selection_meta_box_data_save($post_id){
+
+        if (
+            !isset($_POST['pxls_cf8_form_selection_metabox_nonce']) ||!wp_verify_nonce($_POST['pxls_cf8_form_selection_metabox_nonce'], 'pxls_cf8_form_selection_metabox_action')){
+
+            return;
+
+        }
+
+        // Check for autosave
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+            return;
+        }
+    
+        // Check user permissions
+        if (!current_user_can('edit_post', $post_id)) {
+            return;
+        }
+
+
+        // Save metadata
+        if (isset($_POST['pxls_cf8_form_selection'])) {
+
+            $selected_form = sanitize_text_field($_POST['pxls_cf8_form_selection']);
+            update_post_meta($post_id, 'pxls_cf8_selected_form', $selected_form);
+
+        } else {
+
+            // If the field is empty, delete the meta to clean up
+            delete_post_meta($post_id, 'pxls_cf8_selected_form');
+            
+        }
+
+
 
     }
 
