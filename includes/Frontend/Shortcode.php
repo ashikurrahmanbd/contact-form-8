@@ -88,7 +88,10 @@ class Shortcode{
 
                     $body = "Name: $name\nEmail: $email\nMessage:\n$message";
 
-                    $headers = ['Content-Type: text/plain; charset=UTF-8'];
+                    $headers = [
+                        'Content-Type: text/plain; charset=UTF-8',
+                        'From: Your Name <ashik@pixelese.com>',
+                    ];
                 
                     if (wp_mail($reciver, $subject, $body, $headers)) {
 
@@ -96,7 +99,13 @@ class Shortcode{
 
                     } else {
 
+                       
+
                         echo 'Failed to send email.';
+
+                        add_action('wp_mail_failed', function ($error) {
+                            error_log(print_r($error, true));
+                        });
 
                     }
 
