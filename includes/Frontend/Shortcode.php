@@ -60,6 +60,51 @@ class Shortcode{
             include_once $template_file;
 
 
+            if (isset($_POST['pxls_cf8_form_submit'])) {
+
+                
+                $name = isset($_POST['pxls_cf8_form_name']) ? sanitize_text_field($_POST['pxls_cf8_form_name']) : '';
+            
+                
+                $email = isset($_POST['pxls_cf8_form_email']) ? sanitize_email($_POST['pxls_cf8_form_email']) : '';
+            
+              
+                $message = isset($_POST['pxls_cf8_form_message']) ? sanitize_textarea_field($_POST['pxls_cf8_form_message']) : '';
+            
+                // Optional: Perform server-side validation
+                if (empty($name) || empty($email) || empty($message)) {
+
+                    echo 'All fields are required.';
+
+                } elseif (!is_email($email)) {
+
+                    echo 'Invalid email address.';
+
+                } else {
+                    
+                    $reciver = $reciever_email;
+
+                    $subject = 'New Contact Form Submission';
+
+                    $body = "Name: $name\nEmail: $email\nMessage:\n$message";
+
+                    $headers = ['Content-Type: text/plain; charset=UTF-8'];
+                
+                    if (wp_mail($reciver, $subject, $body, $headers)) {
+
+                        echo '<p style="text-align:center; color: #008000;">Email sent successfully!</p>';
+
+                    } else {
+
+                        echo 'Failed to send email.';
+
+                    }
+
+                }
+            }
+
+
+
             return ob_get_clean();
 
         }else{
