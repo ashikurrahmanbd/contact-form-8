@@ -71,6 +71,18 @@ class Cpt{
 
         );
 
+        //metabox for shortcode generate
+        add_meta_box(
+
+            'pxls_cf8_shortcode_generate', 
+            'Shortcode', 
+            [$this, 'pxls_cf8_shortcode_generate_callback'], 
+            'pxls-cf8', 
+            'side', 
+            'default',  
+
+        );
+
     }
 
 
@@ -137,10 +149,18 @@ class Cpt{
 
             // If the field is empty, delete the meta to clean up
             delete_post_meta($post_id, 'pxls_cf8_selected_form');
-            
+
         }
 
 
+
+    }
+
+
+    //shortcode geneate callback
+    public function pxls_cf8_shortcode_generate_callback($post){
+
+        echo '<p style="font-size:15px;">[cf8 id="'. $post->ID .'"]</p>';
 
     }
 

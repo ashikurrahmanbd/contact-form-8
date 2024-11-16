@@ -7,6 +7,8 @@ class Frontend{
     function __construct(){
 
         
+        new Frontend\Assets();
+        new Frontend\Shortcode(); 
 
     }
 
