@@ -27,6 +27,19 @@ class Menu{
             
         );
 
+        
+
+        add_submenu_page( 
+
+            $menu_slug, 
+            __('Add New', 'contact-form-8'), 
+            __('Add New', 'contact-form-8'), 
+            'manage_options', 
+            'post-new.php?post_type=pxls-cf8',
+          
+
+        );
+
     }
 
 

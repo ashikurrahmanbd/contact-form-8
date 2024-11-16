@@ -8,6 +8,8 @@ class Admin{
 
         new Admin\Menu();
 
+        new Admin\Cpt();
+
     }
 
 
