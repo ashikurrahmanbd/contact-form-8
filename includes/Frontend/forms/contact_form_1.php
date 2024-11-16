@@ -1,10 +1,8 @@
-
 <div>
   <div class="contact-form-wrapper d-flex justify-content-center">
     <form action="#" class="contact-form">
-      <h5 class="title">Contact us</h5>
-      <p class="description">Feel free to contact us if you need any assistance, any help or another question.
-      </p>
+      <h5 class="title"><?php echo esc_attr( $heading ); ?></h5>
+      <p class="description"> <?php echo esc_attr( $subheading ); ?> </p>
       <div>
         <input type="text" class="form-control rounded border-white mb-3 form-input" id="name" placeholder="Name" required>
       </div>

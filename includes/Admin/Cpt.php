@@ -12,6 +12,8 @@ class Cpt{
 
         add_action( 'save_post', [$this, 'pxls_cf8_form_selection_meta_box_data_save'] );
 
+        add_action( 'save_post', [$this, 'pxls_cf8_form_customize_meta_box_data_save'] );
+
     }
 
 
@@ -63,7 +65,7 @@ class Cpt{
         add_meta_box(
 
             'pxls_cf8_select_form_metabox', 
-            'Select Form', 
+            'Select Contact Form', 
             [$this, 'pxls_cf8_select_form_metabox'], 
             'pxls-cf8', 
             'normal', 
@@ -80,6 +82,20 @@ class Cpt{
             'pxls-cf8', 
             'side', 
             'default',  
+
+        );
+
+
+        //add new metabox for configuring form
+        add_meta_box( 
+
+            'pxls_cf8_customize', 
+            'Customize & Configure', 
+            [$this, 'pxls_cf8_customize_callback'], 
+            'pxls-cf8', 
+            'normal', 
+            'default', 
+            
 
         );
 
@@ -100,13 +116,20 @@ class Cpt{
         ?>
 
         <div class="form-selection">
+            <p>Select Prebuilt Contact Form</p>
+
             <select name="pxls_cf8_form_selection" id="pxls_cf8_form_selection">
                 <option value="">Select Form</option>
-                <option value="contact_form_1" <?php selected($selected_form, 'contact_form_1'); ?>>Contact Form 1</option>
-                <option value="contact_form_2" <?php selected($selected_form, 'contact_form_2'); ?>>Contact Form 2</option>
-                <option value="contact_form_3" <?php selected($selected_form, 'contact_form_3'); ?>>Contact Form 3</option>
-                <option value="contact_form_4" <?php selected($selected_form, 'contact_form_4'); ?>>Contact Form 4</option>
+
+                <option value="contact_form_1" <?php selected($selected_form, 'contact_form_1'); ?>> <?php echo esc_attr( 'Contact Form 1' ); ?> </option>
+
+                <option value="contact_form_2" <?php selected($selected_form, 'contact_form_2'); ?>>  <?php echo esc_attr( 'Contact Form 2' ); ?> </option>
+
+                <option value="contact_form_3" <?php selected($selected_form, 'contact_form_3'); ?>> <?php echo esc_attr( 'Contact Form 3' ); ?> </option>
+
+                <option value="contact_form_4" <?php selected($selected_form, 'contact_form_4'); ?>>  <?php echo esc_attr( 'Contact Form 4' ); ?> </option>
             </select>
+
         </div>
 
         <?php
@@ -162,6 +185,123 @@ class Cpt{
 
         echo '<p style="font-size:15px;">[cf8 id="'. $post->ID .'"]</p>';
 
+    }
+
+
+
+    //callback for customize and configure form
+    public function pxls_cf8_customize_callback($post){
+
+        wp_nonce_field( 'pxls_cf8_form_customize_metabox_action', 'pxls_cf8_form_customize_metabox_nonce');
+
+        $heading = get_post_meta( $post->ID, 'pxls_cf8_cf_heading', true);
+
+        $subheading = get_post_meta( $post->ID, 'pxls_cf8_cf_subheading', true);
+
+        $reciever_email = get_post_meta( $post->ID, 'pxls_cf8_cf_reciever_email', true);
+
+        ?>
+
+        <style>
+            .form-customization{
+
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+
+            }
+
+            
+        </style>
+
+        <div class="form-customization" style="margin: 15px 0;">
+
+            <div class="form-heading">
+                <strong>Form Heading</strong><br/>
+                <input type="text" name="pxls_cf8_cf_heading" id="pxls_cf8_cf_heading" value="<?php echo esc_attr( $heading ); ?>" />
+            </div>
+
+            <div class="form-subheading">
+                <strong>Form Sub heading</strong><br/>
+                <input type="text" name="pxls_cf8_cf_subheading" id="pxls_cf8_cf_subheading" value="<?php echo esc_attr( $subheading ); ?>" />
+            </div>
+
+            <div class="form-reciever-email">
+                <strong>Reciever Email</strong><br/>
+                <input type="email" name="pxls_cf8_cf_reciever_email" id="pxls_cf8_cf_reciever_email" value="<?php echo esc_attr( $reciever_email ); ?>" class="text-large" />
+            </div>
+            
+            
+        </div>
+
+        <?php
+
+    }
+
+
+    //save meta data for customize and configure metabox
+    // Save meta data for customize and configure metabox
+    public function pxls_cf8_form_customize_meta_box_data_save($post_id) {
+
+        // Verify nonce
+        if (
+            !isset($_POST['pxls_cf8_form_customize_metabox_nonce']) || 
+            !wp_verify_nonce($_POST['pxls_cf8_form_customize_metabox_nonce'], 'pxls_cf8_form_customize_metabox_action')
+        ) {
+
+            return;
+            
+        }
+
+        // Check for autosave
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+
+            return;
+
+        }
+
+        // Check user permissions
+        if (!current_user_can('edit_post', $post_id)) {
+
+            return;
+
+        }
+
+        // Save metadata for heading
+        if (isset($_POST['pxls_cf8_cf_heading'])) {
+
+            $form_heading = sanitize_text_field($_POST['pxls_cf8_cf_heading']);
+            update_post_meta($post_id, 'pxls_cf8_cf_heading', $form_heading);
+
+        } else {
+
+            delete_post_meta($post_id, 'pxls_cf8_cf_heading');
+
+        }
+
+        // Save metadata for subheading
+        if (isset($_POST['pxls_cf8_cf_subheading'])) {
+
+            $form_subheading = sanitize_text_field($_POST['pxls_cf8_cf_subheading']);
+            update_post_meta($post_id, 'pxls_cf8_cf_subheading', $form_subheading);
+
+        } else {
+
+            delete_post_meta($post_id, 'pxls_cf8_cf_subheading');
+
+        }
+
+        // Save metadata for receiver email
+        if (isset($_POST['pxls_cf8_cf_reciever_email'])) {
+
+            $receiver_email = sanitize_email($_POST['pxls_cf8_cf_reciever_email']);
+            update_post_meta($post_id, 'pxls_cf8_cf_reciever_email', $receiver_email);
+
+        } else {
+
+            delete_post_meta($post_id, 'pxls_cf8_cf_reciever_email');
+
+        }
     }
 
 

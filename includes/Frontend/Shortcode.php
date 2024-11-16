@@ -27,6 +27,12 @@ class Shortcode{
 
         $forms_dir = plugin_dir_path( __FILE__ ) . '/forms';
 
+        $heading = get_post_meta( $atts['id'], 'pxls_cf8_cf_heading', true);
+
+        $subheading = get_post_meta( $atts['id'], 'pxls_cf8_cf_subheading', true);
+
+        $reciever_email = get_post_meta( $atts['id'], 'pxls_cf8_cf_reciever_email', true);
+
         //determine which template to include
         $template_file = '';
 
