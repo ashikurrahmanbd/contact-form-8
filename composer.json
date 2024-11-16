@@ -1,0 +1,20 @@
+{
+    "name": "proashik012/contact-form-8",
+    "description": "A classic WordPress Form Plugin",
+    "type": "wordpress-plugin",
+    "license": "GPLv2",
+    "autoload": {
+        "psr-4": {
+            "PXLS\\CF8\\": "includes/"
+        },
+        "files": []
+    },
+    "authors": [
+        {
+            "name": "Ashikur Rahman",
+            "email": "proashik012@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
