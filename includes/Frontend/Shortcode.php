@@ -99,13 +99,7 @@ class Shortcode{
 
                     } else {
 
-                       
-
                         echo 'Failed to send email.';
-
-                        add_action('wp_mail_failed', function ($error) {
-                            error_log(print_r($error, true));
-                        });
 
                     }
 
